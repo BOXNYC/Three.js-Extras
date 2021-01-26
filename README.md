@@ -2,7 +2,7 @@
 Chroma Key Shader Material w/ Video Texture
 
 ## Arguments
-ChromaKeyVideoShaderMaterial( video: <HTMLVideoElement>, [chromaKey: <color>, range: <float>] ): ShaderMaterial
+ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>, [chromaKey: \<color\>, range: \<float\>] ): ShaderMaterial
 - video [HTMLVideoElement] HTML Video Element.
 - chromaKey [Mixed] Color name passed to THREE.Color(). Default: 0xd400
 - range [float] Color range to key. Default 0.5
