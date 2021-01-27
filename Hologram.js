@@ -2,15 +2,20 @@
 THREE.Hologram = function( video, options ) {
 	
 	options = options || {
-  	// chromaKey, chromaRange, initVideoScale, feetOffset, widthSegments, heightSegments
+  	// chromaKey, chromaRange, chromaMult, initVideoScale, feetOffset, widthSegments, heightSegments
 	};
+	if ( options.chromaRange ) options.range = options.chromaRange;
+	if ( options.chromaMult ) options.mult = options.chromaMult;
+	delete options.chromaRange;
+	delete options.chromaMult;
+	
 	options.initVideoScale = options.initVideoScale || 0.01;
 	
 	var scope = this;
 	
   function loadeddata(e) {
     
-    scope.material = new THREE.ChromaKeyVideoShaderMaterial( video, options.chromaKey, options.chromaRange );
+    scope.material = new THREE.ChromaKeyVideoShaderMaterial( video, options );
     scope.geometry = new THREE.HologramGeometry(
       video.videoWidth * options.initVideoScale,
       video.videoHeight * options.initVideoScale,
