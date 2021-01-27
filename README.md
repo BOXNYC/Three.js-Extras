@@ -27,3 +27,19 @@ function loadeddata(e) {
 }
 videoEl.addEventListener( 'loadeddata', loadeddata )
 ```
+
+## Hologram Geometry & Mesh
+HologramGeometry( width, height, feetOffset, widthSegments, heightSegments ): PlaneGeometry
+- width & height : Same as PlaneGeometry
+- feetOffset [Vector2] Pivot offset from bottom center. Default: new THREE.Vector2()
+- widthSegments & heightSegments : Same as PlaneGeometry
+
+HologramMesh( geometry, material ): Mesh
+- geometry & material : Same as Mesh
+
+## Properiets
+- HologramGeometry().feetOffset - Gets and sets the offset pivot. Default: new THREE.Vector2()
+
+## Methods
+- HologramMesh().rotateYToCamera( camera \<PerspectiveCamera\> )
+
