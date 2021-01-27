@@ -18,10 +18,10 @@ ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>[ ,chromaKey: \<color\>
 - .range - Gets and sets the .uniforms.range float value.
 - .map - Gets the THREE.VideoTexture() instance object value.
 - .video - Gets the HTMLVideoElement THREE.VideoTexture().image value.
-
-
-
-
+\
+\
+\
+\
 
 # Hologram Geometry & Mesh
 HologramGeometry( [width, height, feetOffset, widthSegments, heightSegments] ): PlaneGeometry
@@ -52,10 +52,10 @@ function loadeddata(e) {
 }
 videoEl.addEventListener( 'loadeddata', loadeddata )
 ```
-
-
-
-
+\
+\
+\
+\
 
 # Hologram.js
 Hologram( video[, options] ): HologramMesh
