@@ -37,7 +37,7 @@ HologramGeometry( width, height, feetOffset, widthSegments, heightSegments ): Pl
 HologramMesh( geometry, material ): Mesh
 - geometry & material : Same as Mesh
 
-## Properiets
+## Properties
 - HologramGeometry().feetOffset - Gets and sets the offset pivot. Default: new THREE.Vector2()
 
 ## Methods
