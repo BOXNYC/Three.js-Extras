@@ -1,5 +1,5 @@
-# Three.js ~ ChromaKeyVideoShaderMaterial.js
-Chroma Key Shader Material w/ Video Texture
+# Three.js ~ Holograms
+Tools for creating Three.js Hologram Plannar videos!
 
 ## Arguments
 ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>, [chromaKey: \<color\>, range: \<float\>] ): ShaderMaterial
