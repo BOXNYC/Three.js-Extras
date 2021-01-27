@@ -1,3 +1,4 @@
+
 THREE.HologramMesh = function( geometry, material ) {
 	
 	THREE.Mesh.call( this, geometry, material );
@@ -13,4 +14,5 @@ THREE.HologramMesh = function( geometry, material ) {
 }
 
 THREE.HologramMesh.prototype = Object.create( THREE.Mesh.prototype );
+THREE.HologramMesh.prototype.constructor = THREE.HologramMesh;
 THREE.HologramMesh.prototype.isHologramMesh = true;
