@@ -4,7 +4,7 @@ Tools for creating Three.js Hologram Plannar videos!
 # ChromaKeyVideoShaderMaterial
 
 ## Arguments
-ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>, [chromaKey: \<color\>, range: \<float\>] ): ShaderMaterial
+ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>[ ,chromaKey: \<color\>, range: \<float\>] ): ShaderMaterial
 - video [HTMLVideoElement] HTML Video Element.
 - chromaKey [Mixed] Color name passed to THREE.Color(). Default: 0xd400
 - range [float] Color range to key. Default 0.5
@@ -16,7 +16,7 @@ ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>, [chromaKey: \<color\>
 - .video - Gets the HTMLVideoElement THREE.VideoTexture().image value.
 
 # Hologram Geometry & Mesh
-HologramGeometry( width, height, feetOffset, widthSegments, heightSegments ): PlaneGeometry
+HologramGeometry( [width, height, feetOffset, widthSegments, heightSegments] ): PlaneGeometry
 - width & height : Same as PlaneGeometry
 - feetOffset [Vector2] Pivot offset from bottom center. Default: new THREE.Vector2()
 - widthSegments & heightSegments : Same as PlaneGeometry
@@ -43,4 +43,16 @@ function loadeddata(e) {
   scene.add( videoPlane );
 }
 videoEl.addEventListener( 'loadeddata', loadeddata )
+```
+
+# Hologram.js
+Hologram( video[, options] ): HologramMesh
+- video [HTMLVideoElement] HTML Video Element.
+- options [Object] Settings: chromaKey, chromaRange, initVideoScale, feetOffset, widthSegments, & heightSegments
+
+## Useage Example
+```javascript
+var videoEl = document.getElementById('video')
+var hologram = new THREE.Hologram( videoEl );
+scene.add( hologram );
 ```
