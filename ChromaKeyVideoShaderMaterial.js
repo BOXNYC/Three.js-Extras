@@ -1,9 +1,11 @@
 
-THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
+THREE.ChromaKeyVideoShaderMaterial = function( video, options ) {
 	
-	THREE.ShaderMaterial.call( this );
-	
-	var videoTexture = new THREE.VideoTexture( video );
+	options = options || {};
+	options.chromaKey = new THREE.Color( options.chromaKey || 0xd400 );
+	options.range = options.range	 || 0.5;
+	options.mult = options.mult || 7.0;
+	THREE.ShaderMaterial.call( this );	var videoTexture = new THREE.VideoTexture( video );
 	videoTexture.minFilter = THREE.LinearFilter;
 	videoTexture.magFilter = THREE.LinearFilter;
 	
@@ -16,11 +18,15 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
 			},
 			chromaKey: {
 				type: 'c',
-				value: new THREE.Color( chromaKey || 0xd400 )
+				value: options.chromaKey
 			},
 			range: {
         type: 'r',
-        value: range || 0.5
+        value: options.range
+      },
+      mult: {
+        type: 'r',
+        value: options.mult
       }
 		},
 		
@@ -34,15 +40,16 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
 		].join( "\n" ),
 		
 		fragmentShader: [
-  		'uniform sampler2D tex;                               ',
+  		'uniform sampler2D tex;                                   ',
     	'uniform vec3 chromaKey;                                  ',
-    	'uniform float range;                                 ',
-    	'varying vec2 vUv;                                    ',
-    	'void main() {                                        ',
-    	'  vec3 tColor = texture2D( tex, vUv ).rgb;           ',
-    	'  float a = (length(tColor - chromaKey) - range) * 7.0;  ',
-    	'  gl_FragColor = vec4(tColor, a);                    ',
-    	'}                                                    '
+    	'uniform float range;                                     ',
+    	'uniform float mult;                                      ',
+    	'varying vec2 vUv;                                        ',
+    	'void main() {                                            ',
+    	'  vec3 tColor = texture2D( tex, vUv ).rgb;               ',
+    	'  float a = (length(tColor - chromaKey) - range) * mult;  ',
+    	'  gl_FragColor = vec4(tColor, a);                        ',
+    	'}                                                        '
 		].join( "\n" ),
 
 		transparent: true
@@ -67,6 +74,15 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
     }
   });
   
+  Object.defineProperty( this, 'mult', {
+    set: function( value ) {
+      this.uniforms.mult.value = value
+    },
+    get: function(){
+      return this.uniforms.mult.value
+    }
+  });
+  
   Object.defineProperty( this, 'map', {
     get: function(){
       return videoTexture;
@@ -78,6 +94,8 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
       return videoTexture.image;
     }
   });
+  
+  
 	
 }
 
