@@ -15,22 +15,7 @@ ChromaKeyVideoShaderMaterial( video: \<HTMLVideoElement\>, [chromaKey: \<color\>
 - .map - Gets the THREE.VideoTexture() instance object value.
 - .video - Gets the HTMLVideoElement THREE.VideoTexture().image value.
 
-## Useage Example
-```javascript
-var videoEl = document.getElementById('video')
-var videoPlane = null
-function loadeddata(e) {
-  var videoMaterial = new THREE.ChromaKeyVideoShaderMaterial( videoEl );
-  var videoGeo = new THREE.PlaneGeometry( videoEl.videoWidth, videoEl.videoHeight, 1 );
-  videoPlane = new THREE.Mesh( videoGeo, videoMaterial );
-  var scale = 0.01;
-  videoPlane.scale.set( scale, scale, scale );
-  scene.add( videoPlane );
-}
-videoEl.addEventListener( 'loadeddata', loadeddata )
-```
-
-## Hologram Geometry & Mesh
+# Hologram Geometry & Mesh
 HologramGeometry( width, height, feetOffset, widthSegments, heightSegments ): PlaneGeometry
 - width & height : Same as PlaneGeometry
 - feetOffset [Vector2] Pivot offset from bottom center. Default: new THREE.Vector2()
@@ -45,3 +30,17 @@ HologramMesh( geometry, material ): Mesh
 ## Methods
 - HologramMesh().rotateYToCamera( camera \<PerspectiveCamera\> )
 
+## Useage Example
+```javascript
+var videoEl = document.getElementById('video')
+var videoPlane = null
+function loadeddata(e) {
+  var videoMaterial = new THREE.ChromaKeyVideoShaderMaterial( videoEl );
+  var videoGeo = new THREE.HologramGeometry( videoEl.videoWidth, videoEl.videoHeight );
+  videoPlane = new THREE.HologramMesh( videoGeo, videoMaterial );
+  var scale = 0.01;
+  videoPlane.scale.set( scale, scale, scale );
+  scene.add( videoPlane );
+}
+videoEl.addEventListener( 'loadeddata', loadeddata )
+```
