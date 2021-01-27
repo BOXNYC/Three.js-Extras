@@ -81,4 +81,5 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
 }
 
 THREE.ChromaKeyVideoShaderMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+THREE.ChromaKeyVideoShaderMaterial.prototype.constructor = THREE.ChromaKeyVideoShaderMaterial;
 THREE.ChromaKeyVideoShaderMaterial.prototype.isChromaKeyVideoShaderMaterial = true;
