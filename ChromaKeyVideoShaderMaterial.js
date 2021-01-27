@@ -1,3 +1,4 @@
+
 THREE.ChromaKeyVideoShaderMaterial = function( video, chromaKey, range ) {
 	
 	THREE.ShaderMaterial.call( this );
