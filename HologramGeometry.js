@@ -1,3 +1,4 @@
+
 THREE.HologramGeometry = function( width, height, feetOffset, widthSegments, heightSegments ) {
 	
 	THREE.PlaneGeometry.call( this, width, height, widthSegments, heightSegments );
@@ -22,4 +23,5 @@ THREE.HologramGeometry = function( width, height, feetOffset, widthSegments, hei
 }
 
 THREE.HologramGeometry.prototype = Object.create( THREE.PlaneGeometry.prototype );
+THREE.HologramGeometry.prototype.constructor = THREE.HologramGeometry;
 THREE.HologramGeometry.prototype.isHologramGeometry = true;
