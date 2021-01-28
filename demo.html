@@ -11,6 +11,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r124/three.min.js"></script>
     <script src="js/ChromaKeyVideoShaderMaterial.js"></script>
+    <script src="js/ChromaKeyVideoShaderMaterialShadow.js"></script>
     <script src="js/HologramMesh.js"></script>
     <script src="js/HologramGeometry.js"></script>
     <script src="js/Hologram.js"></script>
@@ -21,11 +22,14 @@
     <script>
       
       var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-			camera.position.z = 5;
+      scene.background = new THREE.Color( 'pink' );
+      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      camera.position.y = 1
+      camera.position.z = 5;
 
-			var renderer = new THREE.WebGLRenderer();
-			var resize = () => {
+      var renderer = new THREE.WebGLRenderer();
+      renderer.shadowMap.enabled = true;
+      var resize = () => {
         var DPR = window.devicePixelRatio
         renderer.setPixelRatio(Math.min(2, DPR))
         var newWidth = window.innerWidth
@@ -37,31 +41,25 @@
       window.onresize = resize
       document.body.appendChild( renderer.domElement );
       resize()
-			
+      
       var videoEl = document.getElementById('video');
       
-      /* // Longhand:
-      function loadeddata(e) {
-        var videoMaterial = new THREE.ChromaKeyVideoShaderMaterial( videoEl, { chromaKey: '#14ff0b', range: 0.63, mult: 7.0 } );
-        var videoGeo = new THREE.HologramGeometry( videoEl.videoWidth, videoEl.videoHeight );
-        window.hologram = new THREE.HologramMesh( videoGeo, videoMaterial );
-        var scale = 0.01;
-        window.hologram.scale.set( scale, scale, scale );
-        scene.add( window.hologram );
+      const hologramSettings = { 
+        chromaKey: '#14ff0b', chromaRange: 0.63, chromaMult: 7.0, 
+        feetOffset: new THREE.Vector2(0, 0.04), 
+        sillouetteShadowOpacity: 0.2, sillouetteShadow: true 
       }
-      videoEl.addEventListener( 'loadeddata', loadeddata )
-      //*/
-      
-      //* // Shorthand:
-      window.hologram = new THREE.Hologram( video, { chromaKey: '#14ff0b', chromaRange: 0.63, chromaMult: 7.0 } );
+      window.hologram = new THREE.Hologram( video, hologramSettings );
       scene.add( window.hologram );
-      //*/
-
-			var animate = function () {
-				requestAnimationFrame( animate );
-				renderer.render( scene, camera );
-			};
-			requestAnimationFrame( animate );
+      
+      var animate = function () {
+        requestAnimationFrame( animate );
+        renderer.render( scene, camera );
+      };
+      requestAnimationFrame( animate );
+      
+      window.scene = scene
+      window.camera = camera
       
     </script>
   </body>
