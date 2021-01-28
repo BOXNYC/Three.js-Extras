@@ -1,26 +1,29 @@
 
 THREE.ChromaKeyVideoShaderMaterial = function( video, options ) {
-	
-	options = options || {};
-	options.chromaKey = new THREE.Color( options.chromaKey || 0xd400 );
-	options.range = options.range	 || 0.5;
-	options.mult = options.mult || 7.0;
-	THREE.ShaderMaterial.call( this );	var videoTexture = new THREE.VideoTexture( video );
-	videoTexture.minFilter = THREE.LinearFilter;
-	videoTexture.magFilter = THREE.LinearFilter;
-	
-	this.setValues({
+  
+  options = options || {};
+  options.chromaKey = new THREE.Color( options.chromaKey || 0xd400 );
+  options.range = options.range   || 0.5;
+  options.mult = options.mult || 7.0;
+  
+  THREE.ShaderMaterial.call( this, { depthTest: false } );
+  
+  var videoTexture = new THREE.VideoTexture( video );
+  videoTexture.minFilter = THREE.LinearFilter;
+  videoTexture.magFilter = THREE.LinearFilter;
+  
+  this.setValues({
 
-		uniforms: {
-			tex: {
-				type: 't',
-				value: videoTexture
-			},
-			chromaKey: {
-				type: 'c',
-				value: options.chromaKey
-			},
-			range: {
+    uniforms: {
+      tex: {
+        type: 't',
+        value: videoTexture
+      },
+      chromaKey: {
+        type: 'c',
+        value: options.chromaKey
+      },
+      range: {
         type: 'r',
         value: options.range
       },
@@ -28,35 +31,35 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, options ) {
         type: 'r',
         value: options.mult
       }
-		},
-		
-		vertexShader: [
-  		'varying vec2 vUv;                                             ',
-    	'void main() {                                                 ',
-    	'  vUv = uv;                                                   ',
-    	'  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );  ',
-    	'  gl_Position = projectionMatrix * mvPosition;                ',
-    	'}                                                             '
-		].join( "\n" ),
-		
-		fragmentShader: [
-  		'uniform sampler2D tex;                                   ',
-    	'uniform vec3 chromaKey;                                  ',
-    	'uniform float range;                                     ',
-    	'uniform float mult;                                      ',
-    	'varying vec2 vUv;                                        ',
-    	'void main() {                                            ',
-    	'  vec3 tColor = texture2D( tex, vUv ).rgb;               ',
-    	'  float a = (length(tColor - chromaKey) - range) * mult;  ',
-    	'  gl_FragColor = vec4(tColor, a);                        ',
-    	'}                                                        '
-		].join( "\n" ),
+    },
+    
+    vertexShader: '                                             \
+      varying vec2 vUv;                                          \
+      void main() {                                               \
+        vUv = uv;                                                  \
+        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );  \
+        gl_Position = projectionMatrix * mvPosition;                 \
+      }                                                               \
+    ',
+    
+    fragmentShader: '                                   \
+      uniform sampler2D tex;                             \
+      uniform vec3 chromaKey;                             \
+      uniform float range;                                 \
+      uniform float mult;                                   \
+      varying vec2 vUv;                                      \
+      void main() {                                           \
+        vec3 tColor = texture2D( tex, vUv ).rgb;               \
+        float a = (length(tColor - chromaKey) - range) * mult;  \
+        gl_FragColor = vec4(tColor, a);                          \
+      }                                                           \
+    ',
 
-		transparent: true
-		
-	});
-	
-	Object.defineProperty( this, 'chromaKey', {
+    transparent: true
+    
+  });
+  
+  Object.defineProperty( this, 'chromaKey', {
     set: function( value ) {
       this.uniforms.chromaKey.value = new THREE.Color( value )
     },
@@ -64,8 +67,8 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, options ) {
       return this.uniforms.chromaKey.value
     }
   });
-	
-	Object.defineProperty( this, 'range', {
+  
+  Object.defineProperty( this, 'range', {
     set: function( value ) {
       this.uniforms.range.value = value
     },
@@ -84,19 +87,20 @@ THREE.ChromaKeyVideoShaderMaterial = function( video, options ) {
   });
   
   Object.defineProperty( this, 'map', {
+    set: function( value ){
+      return this.uniforms.tex.value = value
+    },
     get: function(){
-      return videoTexture;
+      return this.uniforms.tex.value;
     }
   });
   
   Object.defineProperty( this, 'video', {
     get: function(){
-      return videoTexture.image;
+      return this.map.image;
     }
   });
   
-  
-	
 }
 
 THREE.ChromaKeyVideoShaderMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
