@@ -54,12 +54,9 @@ THREE.ChromaKeyVideoShaderMaterialShadow = function( videoTexture, options ) {
       void main() {                                          \
         vec3 tColor = texture2D( tex, vUv ).rgb;              \
         float a = (length(tColor - chromaKey) - range) * mult; \
-        if ( a > 0.05 ) {                                       \
-          gl_FragColor = vec4(0, 0, 0, min(a, opacity));         \
-        } else {                                                  \
-          gl_FragColor = vec4(tColor, a);                          \
-        };                                                          \
-      }\
+        vec4 sum = vec4(0, 0, 0, min(a, opacity));              \
+        gl_FragColor = sum;                                      \
+      }                                                           \
     ',
 
     transparent: true
