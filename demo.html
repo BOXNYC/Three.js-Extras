@@ -47,7 +47,9 @@
       const hologramSettings = { 
         chromaKey: '#14ff0b', chromaRange: 0.63, chromaMult: 7.0, 
         feetOffset: new THREE.Vector2(0, 0.04), 
-        sillouetteShadowOpacity: 0.2, sillouetteShadow: true 
+        sillouetteShadowOpacity: 0.2, sillouetteShadow: true,
+        bitmapShadow: true, bitmapShadowOpacity: 0.3
+        //bitmapShadowTexture
       }
       window.hologram = new THREE.Hologram( video, hologramSettings );
       scene.add( window.hologram );
