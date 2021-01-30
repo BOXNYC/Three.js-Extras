@@ -35,8 +35,12 @@ THREE.Hologram = function( video, options ) {
       );
       hologramShadow.name = 'hologramSillouetteShadow';
       hologramShadow.material.name = 'hologramSillouetteShadowMaterial';
-      hologramShadow.rotateX( THREE.Math.degToRad( -90 ) )
+      hologramShadow.rotateX( THREE.Math.degToRad( -90 ) );
       scope.add( hologramShadow );
+      if ( typeof options.sillouetteShadowRotation === 'number' )
+        scope.sillouetteShadowRotation = options.sillouetteShadowRotation;
+      if ( typeof options.sillouetteShadowHeight === 'number' )
+        scope.sillouetteShadowHeight = options.sillouetteShadowHeight;
     }
     
     if ( options.bitmapShadow ) {
@@ -49,20 +53,88 @@ THREE.Hologram = function( video, options ) {
           opacity: options.bitmapShadowOpacity || 0.4
         })
       );
-      bitmapShadow.name = 'bitmapSillouetteShadow';
-      bitmapShadow.material.name = 'bitmapSillouetteShadowMaterial';
-      bitmapShadow.rotateX( THREE.Math.degToRad( -90 ) )
-      scope.add( bitmapShadow )
+      bitmapShadow.name = 'hologramBitmapShadow';
+      bitmapShadow.material.name = 'hologramBitmapShadowMaterial';
+      bitmapShadow.rotateX( THREE.Math.degToRad( -90 ) );
+      scope.add( bitmapShadow );
+      if ( typeof options.bitmapShadowSize === 'number' )
+        scope.bitmapShadowSize = options.bitmapShadowSize;
     }
     
   };
   
   video.addEventListener( 'loadeddata', loadeddata );
-  if ( video.videoWidth ) loadeddata.call( video )
+  if ( video.videoWidth ) loadeddata.call( video );
   
   THREE.HologramMesh.call( this );
   
   this.renderOrder = 1;
+  
+  Object.defineProperty( this, 'sillouetteShadowRotation', {
+    set: function( value ) {
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) shadow.rotation.z = THREE.Math.degToRad( value );
+    },
+    get: function(){
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) return THREE.Math.radToDeg( shadow.rotation.z );
+      return null;
+    }
+  });
+  
+  Object.defineProperty( this, 'sillouetteShadowHeight', {
+    set: function( value ) {
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) shadow.scale.y = value;
+    },
+    get: function(){
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) return shadow.scale.y;
+      return null;
+    }
+  });
+  
+  Object.defineProperty( this, 'sillouetteShadowOpacity', {
+    set: function( value ) {
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) shadow.material.opacity = value;
+    },
+    get: function(){
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) return shadow.material.opacity;
+      return null;
+    }
+  });
+  
+  Object.defineProperty( this, 'bitmapShadowSize', {
+    set: function( value ) {
+      var shadow = this.getObjectByName( 'hologramBitmapShadow' );
+      if ( shadow ) shadow.scale.set( value, value, value );
+    },
+    get: function(){
+      var shadow = this.getObjectByName( 'hologramBitmapShadow' );
+      if ( shadow ) return shadow.scale.x;
+      return null;
+    }
+  });
+  
+  Object.defineProperty( this, 'bitmapShadowOpacity', {
+    set: function( value ) {
+      var shadow = this.getObjectByName( 'hologramBitmapShadow' );
+      if ( shadow ) shadow.material.opacity = value;
+    },
+    get: function(){
+      var shadow = this.getObjectByName( 'hologramBitmapShadow' );
+      if ( shadow ) return shadow.material.opacity;
+      return null;
+    }
+  });
+  
+  Object.defineProperty( this, 'video', {
+    get: function(){
+      return this.material.video;
+    }
+  });
   
 }
 
