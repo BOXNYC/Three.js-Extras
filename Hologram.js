@@ -2,12 +2,15 @@
 THREE.Hologram = function( video, options ) {
   
   var scope = this;
+  var skew = 0.0;
+  var geometryCloned = false;
   
   options = options || {
     // chromaKey, chromaRange, chromaMult,
     // initVideoScale, feetOffset, widthSegments, heightSegments,
     // sillouetteShadow, sillouetteShadowOpacity,
     // blurShadow, blurShadowOpacity **TODO
+    // sillouetteShadowSkew
   };
   if ( options.chromaRange ) options.range = options.chromaRange;
   if ( options.chromaMult ) options.mult = options.chromaMult;
@@ -41,6 +44,9 @@ THREE.Hologram = function( video, options ) {
         scope.sillouetteShadowRotation = options.sillouetteShadowRotation;
       if ( typeof options.sillouetteShadowHeight === 'number' )
         scope.sillouetteShadowHeight = options.sillouetteShadowHeight;
+      if ( typeof options.sillouetteShadowSkew ) {
+        scope.sillouetteShadowSkew = options.sillouetteShadowSkew;
+      }
     }
     
     if ( options.bitmapShadow ) {
@@ -60,6 +66,8 @@ THREE.Hologram = function( video, options ) {
       if ( typeof options.bitmapShadowSize === 'number' )
         scope.bitmapShadowSize = options.bitmapShadowSize;
     }
+    
+    if ( typeof options.onLoad === 'function' ) options.onLoad.call( scope );
     
   };
   
@@ -90,6 +98,26 @@ THREE.Hologram = function( video, options ) {
     get: function(){
       var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
       if ( shadow ) return shadow.scale.y;
+      return null;
+    }
+  });
+  
+  Object.defineProperty( this, 'sillouetteShadowSkew', {
+    set: function( value ) {
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      skew = value
+      if ( !shadow ) return;
+      if ( !geometryCloned ) {
+        shadow.geometry = shadow.geometry.clone();
+        geometryCloned = true;
+      }
+      var matrix = new THREE.Matrix4();
+      matrix.set( 1, skew, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
+      shadow.geometry.applyMatrix4( matrix );
+    },
+    get: function(){
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) return skew;
       return null;
     }
   });
