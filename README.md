@@ -6,7 +6,7 @@ This material is based on the AFRAME version on github. I don't use AFRAME unles
 https://github.com/BOXNYC/Three.js-Extras/tree/main/ChromaKeyVideoShaderMaterial
 
 ### Hologram
-Create video plane green screen holograms using the ChromaKey material above as well as a shadow. Has a bunch of eas-of-use scripts for making holograms super fast and easy.
+Create video plane green screen holograms using the ChromaKey material above as well as a shadow. Has a bunch of eas-of-use scripts for making holograms super fast and easy. Best to use with WebAR.
 https://github.com/BOXNYC/Three.js-Extras/tree/main/Hologram
 
 ### TapToPlace Mesh
