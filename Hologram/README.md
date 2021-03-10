@@ -1,7 +1,7 @@
 # Three.js ~ Holograms
 Tools for creating Three.js Hologram Plannar videos!
 
-https://threejs-extras.box.biz/hologram/
+https://threee.box.biz/hologram/
 
 # ChromaKeyVideoShaderMaterial
 
