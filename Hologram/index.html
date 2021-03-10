@@ -7,18 +7,22 @@
     <title>Hollogram.js - Three.js</title>
     <style>
       * { margin: 0; padding: 0; }
-      video { position: fixed; transform: scale(0.25); transform-origin: 0 0;}
+      video { position: fixed; transform: scale(0.25); transform-origin: 0 0; background-color: rgba(0,0,0,0.15) }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r124/three.min.js"></script>
-    <script src="js/ChromaKeyVideoShaderMaterial.js"></script>
-    <script src="js/ChromaKeyVideoShaderMaterialShadow.js"></script>
-    <script src="js/HologramMesh.js"></script>
-    <script src="js/HologramGeometry.js"></script>
-    <script src="js/Hologram.js"></script>
+    <script src="ChromaKeyVideoShaderMaterial.js"></script>
+    <script src="ChromaKeyVideoShaderMaterialShadow.js"></script>
+    <script src="HologramMesh.js"></script>
+    <script src="HologramGeometry.js"></script>
+    <script src="Hologram.js"></script>
+    <style>
+      
+    </style>
   </head>
 
   <body>
-    <video id="video" playsinline webkit-playsinline muted loop autoplay width="1024" height="512" src="dance.mp4" ></video>
+    <video id="video" playsinline webkit-playsinline muted loop autoplay crossorigin="anonymous" width="1024" height="512" src="dance.mp4" ></video>
+    <!--video id="video" playsinline webkit-playsinline x-muted loop x-autoplay controls poster="grant-256x512.jpg" width="256" height="512" src="grant-256x512.mp4"></video-->
     <script>
       
       var scene = new THREE.Scene();
@@ -44,14 +48,16 @@
       
       var videoEl = document.getElementById('video');
       
-      const hologramSettings = { 
-        chromaKey: '#14ff0b', chromaRange: 0.63, chromaMult: 7.0, 
-        feetOffset: new THREE.Vector2(0, 0.04), 
-        sillouetteShadowOpacity: 0.2, sillouetteShadow: true,
-        bitmapShadow: true, bitmapShadowOpacity: 0.3
-        //bitmapShadowTexture
+      let hologramSettings = {
+        sillouetteShadow: true,
+        chromaKey: "#14ff0b",
+        chromaRange: 0.616,
+        feetOffset: new THREE.Vector2(-0.107, 0.054),
+        sillouetteShadowOpacity: 0.143,
+        sillouetteShadowHeight: -0.679,
+        sillouetteShadowSkew: -0.464
       }
-      window.hologram = new THREE.Hologram( video, hologramSettings );
+      window.hologram = new THREE.Hologram( videoEl, hologramSettings );
       scene.add( window.hologram );
       
       var animate = function () {
@@ -63,6 +69,119 @@
       window.scene = scene
       window.camera = camera
       
+      
+      
     </script>
+    <script>
+      
+      scene.add( new THREE.Line( new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3( -0.1, 0, 0 ),
+        new THREE.Vector3( 0.1, 0, 0 )
+      ]), new THREE.LineBasicMaterial({ color: 'red' }) ) );
+      scene.add( new THREE.Line( new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3( 0, -0.1, 0 ),
+        new THREE.Vector3( 0, 0.1, 0 )
+      ]), new THREE.LineBasicMaterial({ color: 'green' }) ) );
+      scene.add( new THREE.Line( new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3( 0, 0, -0.1 ),
+        new THREE.Vector3( 0, 0, 0.1 )
+      ]), new THREE.LineBasicMaterial({ color: 'blue' }) ) );
+      
+      addEventListener('DOMContentLoaded', ()=>{
+        const $form = document.getElementById('form'),
+              $output = document.getElementById('output'),
+              output = {sillouetteShadow: true},
+              inputChanged = (e, manual) => {
+                const $input = e.target || e
+                const $label = $input.parentNode
+                const $span = $label.querySelector('span')
+                const key = $label.id
+                output[key] = $input.type=='range' ?  parseFloat($input.value) : $input.value
+                if (output["src"] && output["src"].match(/^.*\.mp4$/)) {
+                  const $video = document.getElementById('video')
+                  if ( $video.getAttribute('src') != output["src"] ) {
+                    $video.removeAttribute('poster')
+                    $video.setAttribute('src', output["src"])
+                    window.hologram.dispose()
+                    hologramSettings.chromaKey = output.chromaKey
+                    hologramSettings.chromaRange = output.chromaRange
+                    hologramSettings.feetOffset = new THREE.Vector2( output['"feetOffset.x"'], output['"feetOffset.y"'] )
+                    hologramSettings.sillouetteShadowHeight = output.sillouetteShadowHeight
+                    hologramSettings.sillouetteShadowOpacity = output.sillouetteShadowOpacity
+                    hologramSettings.sillouetteShadowSkew = output.sillouetteShadowSkew
+                    window.hologram = new THREE.Hologram( videoEl, hologramSettings );
+                    scene.add( window.hologram );
+                  }
+                }
+                delete output["src"]
+                $output.value = JSON.stringify( output, null, 2 )
+                $output.value = $output.value.replace(/\"feetOffset\.x\"\:\s*[\-0-9\.]{1,}\,\s*\"feetOffset\.y\"\:\s*[\-0-9\.]{1,}/g, '"feetOffset": new THREE.Vector2('+output['feetOffset.x']+', '+output['feetOffset.y']+')').replace(/  \"/g, '  ').replace(/\"\:/g, ':')
+                $output.rows = $output.value.split(/\n/).length
+                if (!manual) {
+                  if ( $span && $span.hasAttribute('data-value') ) $span.setAttribute('data-value', $input.value )
+                  if ( key == 'feetOffset.x' || key == 'feetOffset.y' ) {
+                    hologram.feetOffset = new THREE.Vector2( output['feetOffset.x'], output['feetOffset.y'] )
+                  } else {
+                    hologram[key] = output[key]
+                  }
+                }
+              }
+        $form.querySelectorAll('input').forEach($input=>{
+          inputChanged($input, true)
+          $input.addEventListener('change', inputChanged, false)
+          $input.addEventListener('input', inputChanged, false)
+        })
+      })
+    </script>
+    <style>
+    #form {
+      
+      position: fixed;
+      top: 0;
+      right: 0;
+      text-align: right;
+      padding: 15px;
+    }
+    #form label { display: block; }
+    #form label input {}
+    textarea {
+        display: block;
+        width: calc(100% - 60px);
+        margin: 15px;
+        padding: 15px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        border: none;
+        background-color: rgba(255,255,255,0.5);
+        border-radius: 10px;
+    }
+    #form label span { display: block; }
+    #form label span::after { content: attr(data-value); margin-left: 10px; color: white; }
+    #src input {
+        border: navajowhite;
+        font-size: 14px;
+        text-align: right;
+        background-color: transparent;
+    }
+    #src {
+        border-radius: 40px;
+        padding: 2px 13px;
+        font-size: 16px;
+        margin: 14px 0;
+        border: 2px solid white;
+    }
+    </style>
+    <div id="form">
+      <label id="src">URL <input type="text" value="dance.mp4" /></label>
+      <label id="chromaKey"><span data-value="#14ff0b">ChromaKey</span> <input type="color" value="#14ff0b" /></label>
+      <label id="chromaRange"><span data-value="0.616">ChromaRange</span> <input type="range" min="0.00" max="1.0" step="0.001" value="0.616" /></label>
+      <label id="feetOffset.x"><span data-value="-0.107">Foot offset x</span> <input type="range" min="-1.0" max="1.0" step="0.001" value="-0.107" /></label>
+      <label id="feetOffset.y"><span data-value="0.054">Foot offset y</span> <input type="range" min="-1.0" max="1.0" step="0.001" value="0.054" /></label>
+      <label id="sillouetteShadowOpacity"><span data-value="0.143">Shadow Opacity</span> <input type="range" min="0.0" max="1.0" step="0.001" value="0.143" /></label>
+      <label id="sillouetteShadowHeight"><span data-value="-0.679">Shadow Height</span> <input type="range" min="-1.0" max="1.0" step="0.001" value="-0.679" /></label>
+      <label id="sillouetteShadowSkew"><span data-value="-0.464">Shadow Skew</span> <input type="range" min="-1.0" max="1.0" step="0.001" value="-0.464" /></label>
+    </div>
+    <textarea id="output" spellcheck="false"></textarea>
   </body>
 </html>

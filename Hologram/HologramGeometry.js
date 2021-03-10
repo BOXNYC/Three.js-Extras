@@ -10,8 +10,14 @@ THREE.HologramGeometry = function( width, height, feetOffset, widthSegments, hei
   Object.defineProperty( this, 'feetOffset', {
     set: function( value ) {
       _feetOffset = value
-      var matrix = new THREE.Matrix4().makeTranslation( ( _width * -( _feetOffset.x / 2 ) ), ( _height * 0.5 ) - ( _height * _feetOffset.y ), 0 )
-      this.applyMatrix4( matrix );
+      var x = ( _width * -( _feetOffset.x / 2 ) )
+      var y = ( _height * 0.5 ) - ( _height * _feetOffset.y )
+      this.userData = this.userData || {};
+      if ( this.userData.currentTranslation ) {
+        this.translate( -this.userData.currentTranslation.x, -this.userData.currentTranslation.y, 0 );
+      }
+      this.userData.currentTranslation = { x: x, y: y };
+      this.translate( x, y, 0 );
     },
     get: function() {
       return _feetOffset;

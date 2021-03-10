@@ -1,6 +1,8 @@
 
 THREE.Hologram = function( video, options ) {
   
+  THREE.HologramMesh.call( this );
+  
   var scope = this;
   var skew = 0.0;
   var geometryCloned = false;
@@ -12,6 +14,7 @@ THREE.Hologram = function( video, options ) {
     // blurShadow, blurShadowOpacity **TODO
     // sillouetteShadowSkew
   };
+  options = Object.assign({}, options)
   if ( options.chromaRange ) options.range = options.chromaRange;
   if ( options.chromaMult ) options.mult = options.chromaMult;
   delete options.chromaRange;
@@ -38,7 +41,7 @@ THREE.Hologram = function( video, options ) {
       );
       hologramShadow.name = 'hologramSillouetteShadow';
       hologramShadow.material.name = 'hologramSillouetteShadowMaterial';
-      hologramShadow.rotateX( THREE.Math.degToRad( -90 ) );
+      hologramShadow.rotation.x = ( THREE.Math.degToRad( -90 ) );
       scope.add( hologramShadow );
       if ( typeof options.sillouetteShadowRotation === 'number' )
         scope.sillouetteShadowRotation = options.sillouetteShadowRotation;
@@ -74,9 +77,61 @@ THREE.Hologram = function( video, options ) {
   video.addEventListener( 'loadeddata', loadeddata );
   if ( video.videoWidth ) loadeddata.call( video );
   
-  THREE.HologramMesh.call( this );
-  
   this.renderOrder = 1;
+  
+  this.dispose = function(){
+    const dispose = ob => {
+      if ( ob.parent ) ob.parent.remove( ob )
+      if ( ob.geometry ) ob.geometry.dispose()
+      if ( ob.material ) ob.material.dispose()
+    }
+    this.children.forEach( dispose )
+    dispose( this )
+  }
+  
+  Object.defineProperty( this, 'feetOffset', {
+    set: function( value ) {
+      this.geometry.feetOffset = value
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow && shadow.geometry.uuid != this.geometry.uuid ) shadow.geometry.feetOffset = value
+    },
+    get: function(){
+      return this.geometry.feetOffset
+    }
+  });
+  
+  Object.defineProperty( this, 'chromaKey', {
+    set: function( value ) {
+      this.material.uniforms.chromaKey.value = new THREE.Color( value )
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) shadow.material.uniforms.chromaKey.value = new THREE.Color( value )
+    },
+    get: function(){
+      return this.material.uniforms.chromaKey.value
+    }
+  });
+  
+  Object.defineProperty( this, 'chromaRange', {
+    set: function( value ) {
+      this.material.uniforms.range.value = value
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) shadow.material.uniforms.range.value = value
+    },
+    get: function(){
+      return this.material.uniforms.range.value
+    }
+  });
+  
+  Object.defineProperty( this, 'chromaMult', {
+    set: function( value ) {
+      this.material.uniforms.mult.value = value
+      var shadow = this.getObjectByName( 'hologramSillouetteShadow' );
+      if ( shadow ) shadow.material.uniforms.mult.value = value
+    },
+    get: function(){
+      return this.material.uniforms.mult.value
+    }
+  });
   
   Object.defineProperty( this, 'sillouetteShadowRotation', {
     set: function( value ) {
@@ -108,11 +163,24 @@ THREE.Hologram = function( video, options ) {
       skew = value
       if ( !shadow ) return;
       if ( !geometryCloned ) {
-        shadow.geometry = shadow.geometry.clone();
+        shadow.geometry = new THREE.HologramGeometry(
+          video.videoWidth * options.initVideoScale,
+          video.videoHeight * options.initVideoScale,
+          options.feetOffset,
+          options.widthSegments,
+          options.heightSegments
+        );
         geometryCloned = true;
       }
-      var matrix = new THREE.Matrix4();
+      var matrix;
+      if ( shadow.userData.skew ) {
+        matrix = new THREE.Matrix4();
+        matrix.set( 1, -shadow.userData.skew, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
+        shadow.geometry.applyMatrix4( matrix );
+      }
+      matrix = new THREE.Matrix4();
       matrix.set( 1, skew, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
+      shadow.userData.skew = skew
       shadow.geometry.applyMatrix4( matrix );
     },
     get: function(){
