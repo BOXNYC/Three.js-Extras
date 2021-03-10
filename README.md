@@ -1,4 +1,4 @@
-# Three.js-Extras THREEE
+# Three.js-Extras "THREEE"
 A bunch of Three.js stuff <3
 
 ### ChromaKey "Green Screen" Video Shader Material
