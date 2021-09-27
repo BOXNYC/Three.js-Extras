@@ -58,7 +58,7 @@ THREE.Hologram = function( video, options ) {
         new THREE.MeshBasicMaterial({
           map: options.bitmapShadowTexture || new THREE.TextureLoader().load( THREE.radialBitmapShadowBase64 ),
           transparent: true,
-          depthTest: false,
+          depthTest: typeof options.bitmapShadowDepthTest === 'boolean' ? options.bitmapShadowDepthTest : true,
           opacity: options.bitmapShadowOpacity || 0.4
         })
       );
@@ -77,7 +77,7 @@ THREE.Hologram = function( video, options ) {
   video.addEventListener( 'loadeddata', loadeddata );
   if ( video.videoWidth ) loadeddata.call( video );
   
-  this.renderOrder = 1;
+  if ( typeof options.renderOrder === 'number' ) this.renderOrder = options.renderOrder;
   
   this.dispose = function(){
     const dispose = ob => {
